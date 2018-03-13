@@ -25,7 +25,8 @@ Then execute script with command:
 ```Shell     
 python datapackage-validation/validate_datapackage.py
 ```
-*You might need to use python3 in some distributions*
+*You might need to use python3 in some distributions.*
+
 *This script has been tested using python3 but might work with python2.*
 
 
