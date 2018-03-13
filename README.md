@@ -19,7 +19,7 @@ Make sure you have the required dependencies with command:
 ```Shell
 pip install -r requirements.txt
 ```
-*you might need to use pip3 in some distributions*
+*You might need to use pip3 in some distributions.*
 
 Then execute script with command:
 ```Shell     
