@@ -1,13 +1,9 @@
 # Datapackage validation script
-This script uses json schema validation. Schemas are defined in 'schema' sub directory.
-There is one schema for each data type "vector", "raster" and "tabular".
+The script handles required attributes needed by the integration script.
 
-The script handles required attributes, type verification and required content (enum).
+If everything works fine the message "Validation OK" is printed in terminal. Otherwise it prints the errors detected.
 
-If everything works fine the message "datapackage.json is OK" is printed in terminal. Otherwise it prints the errors and the message "datapackage.json is not OK! Please check the file again.".
-
-Note that if the script declares that your datapackage.json is ok, it does not mean that the data itself is conform. Further verification is needed to determine if the dataset is compliant.
-The verification of the dataset is done during the data integration process.
+Note that if the script declares that your repository is OK, it does not mean that the data itself is conform. It might still fail during the integration but this script minimizes the number of errors and prevents basic errors before pushing the dataset to GIT project.
 
 ## How to include it in your repository
 Open terminal and go to the root of your repository.
@@ -27,5 +23,3 @@ python datapackage-validation/validate_datapackage.py
 ```
 *You might need to use python3 in some distributions*
 *This script has been tested using python3 but might work with python2.*
-
-
