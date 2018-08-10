@@ -18,6 +18,10 @@ print("Validation of " + repository_name)
 # check that repository path is correct
 if not os.path.isdir(repo_path):
     print('repo_path is not a directory')
+    msg = 'repository path is not a directory'
+    post_issue(name='Validation error ' + repository_name,
+               description='The repository validation was not successful.\n' + msg,
+               issue_type='Dataset Provider improvement needed')
 
 content = os.listdir('.')
 
@@ -25,12 +29,19 @@ content = os.listdir('.')
 dp_file_path = os.path.join(repo_path, 'datapackage.json')
 if not os.path.isfile(dp_file_path):
     print('datapackage.json file missing or not in correct directory')
+    msg = 'datapackage.json file missing or not in correct directory'
+    post_issue(name='Validation error ' + repository_name,
+               description='The repository validation was not successful.\n' + msg,
+               issue_type='Dataset Provider improvement needed')
 
 # check that data directory is present
 data_dir_path = os.path.join(repo_path, 'data')
 if not os.path.isdir(data_dir_path):
     print('data directory missing')
-
+    msg = 'data directory missing'
+    post_issue(name='Validation error ' + repository_name,
+               description='The repository validation was not successful.\n' + msg,
+               issue_type='Dataset Provider improvement needed')
 
 # check properties
 missing_properties = []
@@ -47,7 +58,17 @@ except json.decoder.JSONDecodeError as e:
     post_issue(name='Validation error ' + repository_name,
                description='The repository validation was not successful.\n' + msg,
                issue_type='Dataset Provider improvement needed')
-    sys.exit('Repository is not valid')
+
+# create tags from contributors (data providers)
+try:
+    contributors = dp['contributors']
+    tags = []
+    for c in contributors:
+        print(c['title'])
+        tags.append(c['title'])
+except KeyError as e:
+    pass
+
 
 # profile
 try:
@@ -184,7 +205,9 @@ if dp_resources:
                     error_messages.append('spatial_key_field does not refer to an existing field name')
             else:
                 if not has_geom:
-                    error_messages.append('no geometry provided (nuts/lau reference [attribute spatial_key_field and spatial_resolution] or geometry field)')
+                    error_messages.append('no geometry provided (nuts/lau reference [attribute spatial_key_field and spatial_resolution] or geometry field)\n'
+                                          + '\tThe dataset will be integrated as is but make sure that no geometry is needed.')
+
     else:
         err_msg = '\'profile\' contains an unsupported value! Use only vector-data-resource, raster-data-resource or tabular-data-resource'
         print(err_msg)
@@ -200,19 +223,15 @@ if len(error_messages) + len(missing_properties) > 0:
         str_error_messages = 'Missing properties: \n' + '\n'.join(missing_properties)
     print('Validation error for repository ' + repository_name + '\n' + str_error_messages)
 
-    # create tags from contributors (data providers)
-    try:
-        contributors = dp['contributors']
-        tags = []
-        for c in contributors:
-            print(c['title'])
-            tags.append(c['title'])
-    except KeyError as e:
-        pass
-
     post_issue(name='Validation error ' + repository_name,
                description='The repository validation was not successful.\n' + str_error_messages,
                issue_type='Dataset Provider improvement needed',
                tags=tags)
+
+    if len(error_messages) + len(missing_properties) == 1 and has_geom is False:
+        pass # allow datasets without geometry
+        print('Resource integration continuing despite geom error.')
+    else:
+        print('Resource integration aborted.')
 else:
     print('Validation OK')
