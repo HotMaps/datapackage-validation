@@ -67,7 +67,7 @@ try:
         print(c['title'])
         tags.append(c['title'])
 except KeyError as e:
-    pass
+    tags = []
 
 
 # profile
