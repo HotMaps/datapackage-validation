@@ -74,6 +74,7 @@ except KeyError as e:
 try:
     dp_profile = dp['profile']
 except:
+    dp_profile = None
     missing_properties.append('profile')
 # resources
 try:
